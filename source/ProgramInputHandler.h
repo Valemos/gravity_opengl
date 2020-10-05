@@ -14,16 +14,13 @@ public:
 	const int fps = 60;
 
 	static Vector3 keyboardMoveDir;
-	static Vector3 globalScale;
-	Renderer renderer;
+	static Renderer renderer;
 
-	
 	static ProgramInputHandler* getInstance(int width, int height);
 	~ProgramInputHandler() = default;
 
 	int RunProgram(ProgramFramework*);
 	GLFWwindow* GetWindow() const;
-	void RunInit(int (*initFunc)(ProgramInputHandler*) = nullptr);
 	static void callbackKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void callbackWindowResize(GLFWwindow* window, int width, int height);
 

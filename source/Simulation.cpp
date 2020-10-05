@@ -9,20 +9,19 @@ Simulation::Simulation()
 {
 }
 
-void Simulation::AddCelestialBody(CelestialBody* object, Vector3 pos)
+void Simulation::AddCelestialBody(CelestialBody* object)
 {
-	object->SetPosition(pos);
-	Simulation::objects_.push_back(object);
+	objects_.push_back(object);
 }
 
 void Simulation::RemoveCelestialBody(int index)
 {
-	Simulation::objects_.erase(Simulation::objects_.begin() + index);
+	objects_.erase(objects_.begin() + index);
 }
 
-void Simulation::SetOrbit(CelestialBody* target, CelestialBody* satellite, UniverseConstants* constants)
+void Simulation::SetOrbit(CelestialBody* target, CelestialBody* satellite, const UniverseConstants& constants)
 {
-	float speedModule = sqrt(constants->gravityConstant * (target->Mass() + satellite->Mass())
+	float speedModule = sqrt(constants.gravityConstant * (target->Mass() + satellite->Mass())
 							/ target->Position().distanceSquared(satellite->Position()));
 
 	Vector3 direction = target->Position().direction(satellite->Position());
@@ -31,14 +30,14 @@ void Simulation::SetOrbit(CelestialBody* target, CelestialBody* satellite, Unive
 	satellite->SetSpeed(ortVector * speedModule);
 }
 
-void Simulation::ResetSimulation(UniverseConstants* constants)
+void Simulation::ResetSimulation()
 {
 	objects_.clear();
 }
 
 /// 1. updates objects' velocities according to gravity laws
 /// 2. updates position for every simulated object
-void Simulation::SimulateStep(UniverseConstants* constants, bool& stopSimulation)
+void Simulation::SimulateStep(const UniverseConstants& constants, bool& stopSimulation)
 {
 	for (CelestialBody* body : objects_) {
 		body->UpdateSpeed(CalculateAcceleration(objects_, body, constants), constants);
@@ -51,16 +50,15 @@ void Simulation::SimulateStep(UniverseConstants* constants, bool& stopSimulation
 	}
 }
 
-Vector3 Simulation::CalculateAcceleration(std::vector<CelestialBody*> otherObjects, CelestialBody* target, UniverseConstants* constants)
+Vector3 Simulation::CalculateAcceleration(const std::vector<CelestialBody*>& otherObjects, CelestialBody* target, const UniverseConstants& constants)
 {
 	Vector3 accel = Vector3(0, 0);
-	float distanceSqr;
 
 	for (CelestialBody* object : otherObjects) {
 		if (object != target) {
-			distanceSqr = object->Position().distanceSquared(target->Position());
+			float distanceSqr = object->Position().distanceSquared(target->Position());
 			Vector3 direction = object->Position().direction(target->Position(), distanceSqr);
-			accel += direction * (constants->gravityConstant * object->Mass() / distanceSqr);
+			accel += direction * (constants.gravityConstant * object->Mass() / distanceSqr);
 		}
 	}
 

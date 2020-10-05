@@ -39,6 +39,12 @@
     <ClCompile Include="source\ProgramInputHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\programs\SimulateGravity.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\programs\TestMoveObject.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\UniverseConstants.h">

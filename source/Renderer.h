@@ -4,6 +4,9 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include <string>
+#include <glm/vec3.hpp>
+
+#include "Vector3.h"
 
 struct ShaderSourceCode {
         std::string Vertex;
@@ -19,8 +22,12 @@ public:
 	GLFWwindow* GetWindow() const;
     void LoadShadersFromFile();
 	int getShaderProgram() const;
-
+	glm::vec3 GetScale() const;
+	void SetScale(Vector3 scale);
+	
+	
 private:
+	Vector3 globalScale;
 	GLFWwindow* main_window;
 	unsigned int shaderProgram;
 

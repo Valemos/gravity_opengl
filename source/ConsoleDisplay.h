@@ -14,7 +14,7 @@ public:
 	ConsoleDisplay();
 	~ConsoleDisplay() {};
 
-	void showGameInformation(std::vector<CelestialBody*> objects, UniverseConstants* constants, std::string info, bool rewrite) const;
+	void showGameInformation(std::vector<CelestialBody*> objects, const UniverseConstants& constants, std::string info, bool rewrite) const;
 
 private:
 	HANDLE consoleHandle;

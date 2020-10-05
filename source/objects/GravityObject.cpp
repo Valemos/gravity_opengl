@@ -5,21 +5,21 @@ GravityObject::GravityObject(float radius, float surfaceGravity, float mass, Uni
 {
 	if (surfaceGravity != 0.f)
 	{
-		GravityObject::mass_ = surfaceGravity * radius * radius / constants->gravityConstant;
+		mass_ = surfaceGravity * radius * radius / constants->gravityConstant;
 	}
 	else
 	{
-		GravityObject::mass_ = mass;
+		mass_ = mass;
 	}
 
-	GravityObject::radius_ = radius;
-	GravityObject::speed_ = Vector3(0, 0);
-	GravityObject::position_ = Vector3(0, 0);
+	GravityObject::radius = radius;
+	speed = Vector3(0, 0);
+	position = Vector3(0, 0);
 }
 
-void GravityObject::UpdateSpeed(Vector3 acceleration, UniverseConstants* constants)
+void GravityObject::UpdateSpeed(Vector3 acceleration, const UniverseConstants& constants)
 {
-	this->speed_ += acceleration * constants->timeStep;
+	this->speed += acceleration * constants.timeStep;
 }
 
 /// <summary>
@@ -27,10 +27,10 @@ void GravityObject::UpdateSpeed(Vector3 acceleration, UniverseConstants* constan
 /// </summary>
 void GravityObject::UpdatePosition()
 {
-	GravityObject::position_ += GravityObject::speed_;
+	position += speed;
 }
 
 void GravityObject::RevertPosition()
 {
-	GravityObject::position_ -= GravityObject::speed_;
+	position -= speed;
 }

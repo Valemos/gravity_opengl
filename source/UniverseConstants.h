@@ -4,7 +4,7 @@
 class UniverseConstants
 {
 public:
-	UniverseConstants(float gravityConstant, float timeStep) {
+	UniverseConstants(float gravityConstant = 0.01f, float timeStep = 0.01f) {
 		UniverseConstants::gravityConstant = gravityConstant;
 		UniverseConstants::timeStep = timeStep;
 	}

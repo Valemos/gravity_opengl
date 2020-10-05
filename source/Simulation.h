@@ -21,17 +21,17 @@ public:
 	Simulation();
 	
 	//Manage simulated objects
-	void AddCelestialBody(CelestialBody* gObject, Vector3 pos);
+	void AddCelestialBody(CelestialBody* gObject);
 	void RemoveCelestialBody(int index);
 
-	void SetOrbit(CelestialBody* target, CelestialBody* satellite, UniverseConstants* constants);
+	void SetOrbit(CelestialBody* target, CelestialBody* satellite, const UniverseConstants& constants);
 
-	void ResetSimulation(UniverseConstants* constants);
-	void SimulateStep(UniverseConstants* constants, bool& stop);
+	void ResetSimulation();
+	void SimulateStep(const UniverseConstants& constants, bool& stop);
 
 	/// for container of CelestialBody's object pointers 
 	/// calculates acceleration due to gravity
-	static Vector3 CalculateAcceleration(std::vector<CelestialBody*> otherObjects, CelestialBody* target, UniverseConstants* constants);
+	static Vector3 CalculateAcceleration(const std::vector<CelestialBody*>& otherObjects, CelestialBody* target, const UniverseConstants& constants);
 
 	std::vector<CelestialBody*> Objects() const {
 		return objects_;

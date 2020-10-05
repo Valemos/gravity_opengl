@@ -4,11 +4,11 @@
 #include <sstream>
 #include <fstream>
 
-
 Renderer::Renderer()
 {
     main_window = nullptr;
     shaderProgram = -1; // will write maximum possible value for uint
+    globalScale = { 1.0, 1.0, 1.0 };
 }
 
 GLFWwindow* Renderer::GetWindow() const
@@ -25,6 +25,16 @@ void Renderer::LoadShadersFromFile()
 int Renderer::getShaderProgram() const
 {
     return shaderProgram;
+}
+
+glm::vec3 Renderer::GetScale() const
+{
+    return glm::vec3(globalScale.x, globalScale.y, globalScale.z);
+}
+
+void Renderer::SetScale(Vector3 scale)
+{
+    globalScale = scale;
 }
 
 int Renderer::InitGraphics(int width, int height)

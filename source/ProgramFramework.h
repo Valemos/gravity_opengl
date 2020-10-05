@@ -20,6 +20,7 @@ public:
 	virtual ~ProgramFramework() = default;
 	virtual int Init(ProgramInputHandler*) = 0;
 	virtual int Step(ProgramInputHandler*) = 0;
+	virtual int Finish(ProgramInputHandler*) { return 0; };
 };
 
 #endif

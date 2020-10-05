@@ -21,12 +21,17 @@ struct Vector3 {
 	float scalarMult(const Vector3& other) const;
 
 	// work only with this vector
+
+	float length();
+	
 	// makes module of vector equal one
 	void normalize();
 	Vector3 normal();
 
+
 	Vector3 operator+(const Vector3& other) const;
 	Vector3 operator*(float a) const;
+	Vector3 operator/(float a) const;
 	Vector3 operator=(const Vector3& other);
 	Vector3 operator+=(const Vector3& other);
 	Vector3 operator-=(const Vector3& other);

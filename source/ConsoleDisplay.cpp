@@ -13,10 +13,10 @@ ConsoleDisplay::ConsoleDisplay() {
 
 
 // objects must be Displayable subclass
-void ConsoleDisplay::showGameInformation(std::vector<CelestialBody*> objects, UniverseConstants* constants, std::string info, bool rewrite) const
+void ConsoleDisplay::showGameInformation(std::vector<CelestialBody*> objects, const UniverseConstants& constants, std::string info, bool rewrite) const
 {
 	if (rewrite)
-		SetConsoleCursorPosition(ConsoleDisplay::consoleHandle, COORD{ 0, 0 });
+		SetConsoleCursorPosition(consoleHandle, COORD{ 0, 0 });
 
 	for (CelestialBody* body : objects) {
 		body->display();

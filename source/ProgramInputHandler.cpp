@@ -9,7 +9,7 @@ ProgramInputHandler* ProgramInputHandler::instance = nullptr;
 
 Vector3 ProgramInputHandler::window_size = { 0.0, 0.0 };
 Vector3 ProgramInputHandler::keyboardMoveDir = { 0.0, 0.0 };
-Vector3 ProgramInputHandler::globalScale = { 1.0, 1.0, 1.0 };
+Renderer ProgramInputHandler::renderer = Renderer();
 
 
 ProgramInputHandler* ProgramInputHandler::getInstance(int width = 500, int height = 500)
@@ -23,7 +23,6 @@ ProgramInputHandler* ProgramInputHandler::getInstance(int width = 500, int heigh
 
 ProgramInputHandler::ProgramInputHandler(int width, int height)
 {
-	renderer = Renderer();
 	window_size = { static_cast<float>(width), static_cast<float>(height) };
 }
 
@@ -58,14 +57,17 @@ int ProgramInputHandler::RunProgram(ProgramFramework* program)
 			continue;
 		}
 
-		program->Step(this);
+		if (program->Step(this) != 0)
+		{
+			break;
+		}
 		
 		glfwSwapBuffers(GetWindow());
 		program->previousUpdateTime = glfwGetTime();
 	}
 
 	glfwTerminate();
-	return 0;
+	return program->Finish(this);
 }
 
 GLFWwindow* ProgramInputHandler::GetWindow() const
@@ -105,7 +107,8 @@ void ProgramInputHandler::callbackKeyboard(GLFWwindow* window, int key, int scan
 void ProgramInputHandler::callbackWindowResize(GLFWwindow* window, int width, int height)
 {
 	// change global scale to keep up with new window size
-	globalScale = { window_size.x / width * globalScale.x, window_size.y / width * globalScale.y };
+	auto prevScale = renderer.GetScale();
+	renderer.SetScale({ window_size.x / width * prevScale.x, window_size.y / width * prevScale.y , 1.0});
 	
 	glViewport(0, 0, width, height);
 	window_size = { static_cast<float>(width), static_cast<float>(height) };

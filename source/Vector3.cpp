@@ -57,14 +57,26 @@ float Vector3::scalarMult(const Vector3& other) const
 	return this->x * other.x + this->y * other.y + this->z * other.z;
 }
 
+float Vector3::length()
+{
+	return this->x * this->x + this->y * this->y + this->z * this->z;
+}
+
 void Vector3::normalize()
 {
-	
+	float len = length();
+	this->x /= len;
+	this->y /= len;
+	this->z /= len;
 }
 
 Vector3 Vector3::normal()
 {
-	
+	float len = length();
+	return Vector3(
+		this->x / len,
+		this->y / len,
+		this->z / len);
 }
 
 Vector3 Vector3::operator=(const Vector3& other)
@@ -99,4 +111,9 @@ Vector3 Vector3::operator-=(const Vector3& other)
 Vector3 Vector3::operator*(float a) const
 {
 	return Vector3(this->x * a, this->y * a, this->z * a);
+}
+
+Vector3 Vector3::operator/(float a) const
+{
+	return Vector3(this->x / a, this->y / a, this->z / a);
 }
