@@ -8,6 +8,7 @@ class VectorGUI : public Drawable
 	Vector3 color;
 	Vector3 pointStart;
 	Vector3 pointEnd;
+	
 public:
 	VectorGUI(Vector3 color);
 	

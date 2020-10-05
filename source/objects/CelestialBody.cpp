@@ -43,7 +43,7 @@ void CelestialBody::draw(const Renderer& renderer)
 	glm::mat4 transform = glm::mat4(1.0f);
 
 	auto coordScale = constants->coordinateScale;
-	auto windowScale = renderer.GetScale();
+	auto windowScale = renderer.GetScaleForGL();
 	transform = glm::translate(transform, glm::vec3(
 		position.x * coordScale.x * windowScale.x, 
 		position.y * coordScale.y * windowScale.y, 

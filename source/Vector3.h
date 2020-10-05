@@ -31,6 +31,9 @@ struct Vector3 {
 	// scales each coordinate respectively
 	Vector3 scale(const Vector3& other) const;
 
+	// inverse operation to scale()
+	Vector3 scaleInv(const Vector3& other) const;
+
 
 	Vector3 operator+(const Vector3& other) const;
 	Vector3 operator-(const Vector3& other) const;

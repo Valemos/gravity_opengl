@@ -22,7 +22,8 @@ public:
 	GLFWwindow* GetWindow() const;
     void LoadShadersFromFile();
 	int getShaderProgram() const;
-	glm::vec3 GetScale() const;
+	glm::vec3 GetScaleForGL() const;
+	Vector3 GetScale() const;
 	void SetScale(Vector3 scale);
 	
 	

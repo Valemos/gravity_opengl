@@ -5,7 +5,6 @@
 VectorGUI::VectorGUI(Vector3 color)
 {
 	VectorGUI::color = color;
-	updateGlBuffer();
 }
 
 void VectorGUI::SetStart(Vector3 start)
@@ -56,7 +55,7 @@ void VectorGUI::draw(const Renderer& renderer)
 
 	// point 2
 	vertexBuffer[index++] = pointEnd.x;
-	vertexBuffer[index++] = pointEnd.y;
+	vertexBuffer[index] =   pointEnd.y;
 
 	glLineWidth(width);
 

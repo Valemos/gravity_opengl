@@ -27,9 +27,14 @@ int Renderer::getShaderProgram() const
     return shaderProgram;
 }
 
-glm::vec3 Renderer::GetScale() const
+glm::vec3 Renderer::GetScaleForGL() const
 {
     return glm::vec3(globalScale.x, globalScale.y, globalScale.z);
+}
+
+Vector3 Renderer::GetScale() const
+{
+    return globalScale;
 }
 
 void Renderer::SetScale(Vector3 scale)

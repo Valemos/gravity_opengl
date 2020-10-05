@@ -12,7 +12,7 @@ Renderer ProgramInputHandler::renderer = Renderer();
 
 Vector3* ProgramInputHandler::keyboardMoveDir = new Vector3{ 0.0, 0.0 };
 Vector3* ProgramInputHandler::mousePosition = new Vector3{0.0, 0.0};
-Vector3* ProgramInputHandler::clickedPosition = new Vector3{0.0, 0.0};
+Vector3* ProgramInputHandler::clickedPosition = nullptr;
 
 
 ProgramInputHandler* ProgramInputHandler::getInstance(int width = 500, int height = 500)
@@ -119,8 +119,10 @@ void ProgramInputHandler::callbackKeyboard(GLFWwindow* window, int key, int scan
 void ProgramInputHandler::callbackWindowResize(GLFWwindow* window, int width, int height)
 {
 	// change global scale to keep up with new window size
-	auto prevScale = renderer.GetScale();
-	renderer.SetScale({ window_size.x / width * prevScale.x, window_size.y / width * prevScale.y , 1.0});
+	auto newScale = renderer.GetScale()
+							.scale(window_size)
+							.scaleInv(Vector3{(float)width, (float)height});
+	renderer.SetScale(newScale);
 	
 	glViewport(0, 0, width, height);
 	window_size = { static_cast<float>(width), static_cast<float>(height) };
@@ -132,13 +134,13 @@ void ProgramInputHandler::callbackMouseButton(GLFWwindow* window, int button, in
 	{
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		auto scale = renderer.GetScale();
-		*clickedPosition = { static_cast<float>(xpos) / scale.x, static_cast<float>(ypos) / scale.y };
+		delete clickedPosition;
+		clickedPosition = new Vector3{ static_cast<float>(xpos), static_cast<float>(ypos) };
+		*clickedPosition = clickedPosition->scale(renderer.GetScale());
 	}
 }
 
 void ProgramInputHandler::callbackMouseMoved(GLFWwindow* window, double xpos, double ypos)
 {
-	auto scale = renderer.GetScale();
-	*mousePosition = { static_cast<float>(xpos) / scale.x, static_cast<float>(ypos) / scale.y };
+	*mousePosition = Vector3{ static_cast<float>(xpos), static_cast<float>(ypos) }.scale(renderer.GetScale());
 }

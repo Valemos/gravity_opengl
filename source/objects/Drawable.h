@@ -29,15 +29,8 @@ public:
 
 inline Drawable::~Drawable()
 {
-	if (vertexBuffer != nullptr)
-	{
-		delete[] vertexBuffer;
-	}
-
-	if (indexBuffer != nullptr)
-	{
-		delete[] indexBuffer;
-	}
+	delete[] vertexBuffer;
+	delete[] indexBuffer;
 }
 
 #endif // !INTERFACE_DRAWABLE

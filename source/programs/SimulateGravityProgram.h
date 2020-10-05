@@ -31,39 +31,48 @@ public:
 		display = new ConsoleDisplay();
 	}
 
+	~SimulationProgram()
+	{
+		delete display;
+		delete vectorSelector;
+	}
+
 	int Init(ProgramInputHandler*) override
 	{
 		simulation.ResetSimulation();
 
-		// this scale defines units of measurement related to simulation objects
-		constants.coordinateScale = { 1 / 500.f, 1 / 500.f, 0.f };
 		
-		auto* sun = new CelestialBody(
+		// this scale defines units of measurement related to simulation objects
+		constants.coordinateScale = { 1 / 1000.f, 1 / 1000.f };
+		ProgramInputHandler::renderer.SetScale(constants.coordinateScale);
+		
+		
+		auto* Sun = new CelestialBody(
 			"Sun", 
 			{ 250 / 255.f, 213 / 255.f, 27 / 255.f }, 
 			&constants,
 			200.f, 
 			274.f);
-		auto* earth = new CelestialBody(
+		auto* Earth = new CelestialBody(
 			"Earth", 
 			{ 27 / 255.f, 255 / 255.f, 110 / 255.f }, 
 			&constants,
 			50.f, 
 			9.8f);
 		
-		sun->updateGlBuffer();
-		earth->updateGlBuffer();
+		Sun->updateGlBuffer();
+		Earth->updateGlBuffer();
 
-		simulation.SetOrbit(sun, earth, constants);
+		simulation.SetOrbit(Sun, Earth, constants);
 		
-		sun->SetPosition({ 0.f, 0.f });
-		earth->SetPosition({ 500.f, 0.f });
+		Sun->SetPosition({ 0.f, 0.f });
+		Earth->SetPosition({ 500.f, 0.f });
 		vectorSelector = new VectorSelector();
-		vectorSelector->StartSelectVector(earth->Position());
-		controlledObject = earth;
+		vectorSelector->StartSelectVector(Earth->Position().scale(constants.coordinateScale));
+		controlledObject = Earth;
 		
-		simulation.AddCelestialBody(sun);
-		simulation.AddCelestialBody(earth);
+		simulation.AddCelestialBody(Sun);
+		simulation.AddCelestialBody(Earth);
 
 		// show initial info
 		display->showGameInformation(simulation.Objects(), constants, "Initial position", true);
@@ -77,47 +86,48 @@ public:
 	{
 		if (!vectorSelector->vectorSelected)
 		{
-			// must scale points, collected from mouse clicks to fit in simulation coordinate system
-			auto screenScale = ProgramInputHandler::renderer.GetScale();
-			Vector3 mouseScale = {
-				screenScale.x * constants.coordinateScale.x,
-				screenScale.y * constants.coordinateScale.y };
 			
 			// update vector gui and wait for mouse click
 			if (ProgramInputHandler::clickedPosition != nullptr)
 			{
-				vectorSelector->FinishSelection(ProgramInputHandler::clickedPosition->scale(mouseScale));
-				controlledObject->SetSpeed(vectorSelector->GetResult());
+				vectorSelector->FinishSelection(ProgramInputHandler::clickedPosition->
+														scale(ProgramInputHandler::renderer.GetScale()));
+				
+				// must scale points, collected from mouse clicks to fit in simulation coordinate system
+				controlledObject->SetSpeed(vectorSelector->GetResult()
+					.scaleInv(constants.coordinateScale)
+					.scaleInv(ProgramInputHandler::renderer.GetScale()));
 			}
 			else
 			{
-				vectorSelector->UpdateSelected(ProgramInputHandler::mousePosition->scale(mouseScale));
+				vectorSelector->UpdateSelected(*ProgramInputHandler::mousePosition);
 			}
-			return 0;
 		}
-		
-		if (stepCount == -1) {
-			currentStep++;
-		}
-		else if (currentStep >= stepCount) {
-			return 1;
-		}
-		else {
-			currentStep++;
-		}
-
-		bool stopSimulation = false;
-		simulation.SimulateStep(constants, stopSimulation);
-
-		if (stopSimulation)
+		else
 		{
-			return 0;
+			// simulate physics
+			if (stepCount == -1 || currentStep < stepCount) {
+				currentStep++;
+			} else {
+				return 1;
+			}
+
+			if (!simulation.SimulateStep(constants))
+			{
+				return 1;
+			}
 		}
 
+		// draw objects anyway
 		glClear(GL_COLOR_BUFFER_BIT);
 		for (auto* object : simulation.Objects())
 		{
 			object->draw(ProgramInputHandler::renderer);
+		}
+
+		if (!vectorSelector->vectorSelected)
+		{
+			vectorSelector->draw(ProgramInputHandler::renderer);
 		}
 
 		display->showGameInformation(simulation.Objects(), constants, "", true);

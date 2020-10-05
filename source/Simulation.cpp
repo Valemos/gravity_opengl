@@ -37,7 +37,8 @@ void Simulation::ResetSimulation()
 
 /// 1. updates objects' velocities according to gravity laws
 /// 2. updates position for every simulated object
-void Simulation::SimulateStep(const UniverseConstants& constants, bool& stopSimulation)
+/// returns false if simulation stopped true otherwise
+bool Simulation::SimulateStep(const UniverseConstants& constants)
 {
 	for (CelestialBody* body : objects_) {
 		body->UpdateSpeed(CalculateAcceleration(objects_, body, constants), constants);
@@ -45,9 +46,10 @@ void Simulation::SimulateStep(const UniverseConstants& constants, bool& stopSimu
 
 		CelestialBody* collided = body->CheckCollision(objects_);
 		if (collided != nullptr) {
-			stopSimulation = true;
+			return false;
 		}
 	}
+	return true;
 }
 
 Vector3 Simulation::CalculateAcceleration(const std::vector<CelestialBody*>& otherObjects, CelestialBody* target, const UniverseConstants& constants)

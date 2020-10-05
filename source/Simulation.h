@@ -27,7 +27,7 @@ public:
 	void SetOrbit(CelestialBody* target, CelestialBody* satellite, const UniverseConstants& constants);
 
 	void ResetSimulation();
-	void SimulateStep(const UniverseConstants& constants, bool& stop);
+	bool SimulateStep(const UniverseConstants& constants);
 
 	/// for container of CelestialBody's object pointers 
 	/// calculates acceleration due to gravity
