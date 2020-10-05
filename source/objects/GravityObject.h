@@ -16,7 +16,7 @@ protected:
 
 public:
 
-	GravityObject(float radius, float surfaceGravity, float mass, UniverseConstants* constants);
+	GravityObject(float radius, float surfaceGravity, float mass, const UniverseConstants& constants);
 	virtual ~GravityObject() = default;
 
 	void UpdateSpeed(Vector3 acceleration, const UniverseConstants& constants);

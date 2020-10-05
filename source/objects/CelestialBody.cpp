@@ -3,15 +3,17 @@
 #include <GL/glew.h>
 #include "Renderer.h"
 #include "Vector3.h"
+#include "UniverseConstants.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 CelestialBody::CelestialBody(const std::string name, Vector3 color, UniverseConstants* constants, float radius, float surfaceGravity, float mass) :
-	GravityObject(radius, surfaceGravity, mass, constants)
+	GravityObject(radius, surfaceGravity, mass, *constants),
+	color(color.x, color.y, color.z),
+	constants(constants),
+	name(name)
 {
-	CelestialBody::name = name;
-	CelestialBody::color = {color.x, color.y, color.z};
 }
 
 CelestialBody* CelestialBody::CheckCollision(const std::vector<CelestialBody*>& bodies)
@@ -40,23 +42,28 @@ void CelestialBody::draw(const Renderer& renderer)
 	// calculate transform matrix
 	glm::mat4 transform = glm::mat4(1.0f);
 
-	auto coordScale = renderer.GetScale();
-	transform = glm::translate(transform, glm::vec3(position.x * coordScale.x, position.y * coordScale.y, 0.f));
+	auto coordScale = constants->coordinateScale;
+	auto windowScale = renderer.GetScale();
+	transform = glm::translate(transform, glm::vec3(
+		position.x * coordScale.x * windowScale.x, 
+		position.y * coordScale.y * windowScale.y, 
+		0.f));
 
 	// global window scale set
-	transform = glm::scale(transform, coordScale);
+	transform = glm::scale(transform, glm::vec3(coordScale.x, coordScale.y, coordScale.z));
+	transform = glm::scale(transform, windowScale);
 
 	
 	// get variable locations from shader
-	const int transformLoc = glGetUniformLocation(shaderProgram, "transform");
-	const int colorLoc = glGetUniformLocation(shaderProgram, "fillColor");
+	static const int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+	static const int colorLoc = glGetUniformLocation(shaderProgram, "fillColor");
 	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 	glUniform4fv(colorLoc, 1, value_ptr(color));
 	
 	// enable attributes for vertex buffer
 	// rebind buffers for draw
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize * sizeof(float), figureVertexBuffer, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize * sizeof(float), vertexBuffer, GL_DYNAMIC_DRAW);
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
 	glEnableVertexAttribArray(0);
@@ -72,21 +79,21 @@ void CelestialBody::updateGlBuffer()
 
 	vertexBufferSize = circle_points * 2;
 
-	delete[] figureVertexBuffer;  // we delete previous buffer if there was any
-	figureVertexBuffer = new float[vertexBufferSize]();
+	delete[] vertexBuffer;  // we delete previous buffer if there was any
+	vertexBuffer = new float[vertexBufferSize]();
 
 	double angle = 0.0;
 	int bufIterate = 0;
 	for (int i = 0; i < circle_points; i++)
 	{
-		figureVertexBuffer[bufIterate++] = radius * (float)cos(angle);  // X coordinate
-		figureVertexBuffer[bufIterate++] = radius * (float)sin(angle);  // Y coordinate
+		vertexBuffer[bufIterate++] = radius * (float)cos(angle);  // X coordinate
+		vertexBuffer[bufIterate++] = radius * (float)sin(angle);  // Y coordinate
 		angle += angleStep;
 	}
 
 	glGenBuffers(1, &vertexBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize * sizeof(float), figureVertexBuffer, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize * sizeof(float), vertexBuffer, GL_STATIC_DRAW);
 
 	// define two consecutive floats as one vector id 0 is the same for all figures
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);

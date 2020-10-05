@@ -1,11 +1,11 @@
 #include "GravityObject.h"
 #include "UniverseConstants.h"
 
-GravityObject::GravityObject(float radius, float surfaceGravity, float mass, UniverseConstants* constants)
+GravityObject::GravityObject(float radius, float surfaceGravity, float mass, const UniverseConstants& constants)
 {
 	if (surfaceGravity != 0.f)
 	{
-		mass_ = surfaceGravity * radius * radius / constants->gravityConstant;
+		mass_ = surfaceGravity * radius * radius / constants.gravityConstant;
 	}
 	else
 	{

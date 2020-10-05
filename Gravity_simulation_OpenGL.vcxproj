@@ -149,7 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\programs\SimulateGravity.h" />
+    <ClCompile Include="source\programs\SimulateGravityProgram.h" />
     <ClCompile Include="source\programs\TestMoveObject.h" />
     <ClCompile Include="source\ConsoleDisplay.cpp" />
     <ClCompile Include="source\objects\CelestialBody.cpp" />
@@ -159,6 +159,8 @@
     <ClCompile Include="source\Renderer.cpp" />
     <ClCompile Include="source\Simulation.cpp" />
     <ClCompile Include="source\Vector3.cpp" />
+    <ClCompile Include="source\vector_editor\VectorSelector.cpp" />
+    <ClCompile Include="source\vector_editor\VectorGUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\ProgramFramework.h" />
@@ -172,6 +174,8 @@
     <ClInclude Include="source\Simulation.h" />
     <ClInclude Include="source\UniverseConstants.h" />
     <ClInclude Include="source\Vector3.h" />
+    <ClInclude Include="source\vector_editor\VectorSelector.h" />
+    <ClInclude Include="source\vector_editor\VectorGUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\simple.shader" />

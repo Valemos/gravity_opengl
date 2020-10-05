@@ -1,6 +1,8 @@
 #ifndef GRAVITY_SIMULATION_CELESTIAL_BODY
 #define GRAVITY_SIMULATION_CELESTIAL_BODY
 
+class UniverseConstants;
+
 #include <iostream>
 #include <vector>
 
@@ -13,6 +15,7 @@ class CelestialBody : public GravityObject, public Displayable, public Drawable
 {
 	static const int circle_points = 20;
 	glm::vec3 color;
+	UniverseConstants* constants = nullptr;
 
 public:
 	std::string name;

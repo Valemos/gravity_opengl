@@ -39,10 +39,16 @@
     <ClCompile Include="source\ProgramInputHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\programs\SimulateGravity.h">
+    <ClCompile Include="source\programs\TestMoveObject.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\programs\TestMoveObject.h">
+    <ClCompile Include="source\vector_editor\VectorSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vector_editor\VectorGUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\programs\SimulateGravityProgram.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -78,6 +84,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\ProgramFramework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vector_editor\VectorSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vector_editor\VectorGUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

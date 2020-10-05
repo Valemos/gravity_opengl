@@ -4,6 +4,7 @@
 #include "ProgramFramework.h"
 #include "ProgramInputHandler.h"
 #include "Simulation.h"
+#include "vector_editor/VectorSelector.h"
 
 class UniverseConstants;
 
@@ -15,11 +16,15 @@ class SimulationProgram : public ProgramFramework
 	Simulation simulation;
 	ConsoleDisplay* display;
 
+	// set speed of one celestial body
+	CelestialBody* controlledObject;
+	VectorSelector* vectorSelector;
+	
 public:
 
 	// if steps count equals -1, continue simulation indefinitely
 	SimulationProgram(float fps, int step_count, UniverseConstants physicalConstants) : ProgramFramework(fps),
-		stepCount(step_count)
+		stepCount(step_count), vectorSelector(nullptr)
 	{
 		constants = physicalConstants;
 		simulation = Simulation();
@@ -30,8 +35,8 @@ public:
 	{
 		simulation.ResetSimulation();
 
-		// scale also defines units of measurement on screen
-		ProgramInputHandler::renderer.SetScale({ 1 / 500.f, 1 / 500.f, 1.f });
+		// this scale defines units of measurement related to simulation objects
+		constants.coordinateScale = { 1 / 500.f, 1 / 500.f, 0.f };
 		
 		auto* sun = new CelestialBody(
 			"Sun", 
@@ -49,9 +54,13 @@ public:
 		sun->updateGlBuffer();
 		earth->updateGlBuffer();
 
+		simulation.SetOrbit(sun, earth, constants);
 		
 		sun->SetPosition({ 0.f, 0.f });
 		earth->SetPosition({ 500.f, 0.f });
+		vectorSelector = new VectorSelector();
+		vectorSelector->StartSelectVector(earth->Position());
+		controlledObject = earth;
 		
 		simulation.AddCelestialBody(sun);
 		simulation.AddCelestialBody(earth);
@@ -66,6 +75,27 @@ public:
 	// return 0 if want to continue, anything else will stop loop
 	int Step(ProgramInputHandler*) override
 	{
+		if (!vectorSelector->vectorSelected)
+		{
+			// must scale points, collected from mouse clicks to fit in simulation coordinate system
+			auto screenScale = ProgramInputHandler::renderer.GetScale();
+			Vector3 mouseScale = {
+				screenScale.x * constants.coordinateScale.x,
+				screenScale.y * constants.coordinateScale.y };
+			
+			// update vector gui and wait for mouse click
+			if (ProgramInputHandler::clickedPosition != nullptr)
+			{
+				vectorSelector->FinishSelection(ProgramInputHandler::clickedPosition->scale(mouseScale));
+				controlledObject->SetSpeed(vectorSelector->GetResult());
+			}
+			else
+			{
+				vectorSelector->UpdateSelected(ProgramInputHandler::mousePosition->scale(mouseScale));
+			}
+			return 0;
+		}
+		
 		if (stepCount == -1) {
 			currentStep++;
 		}

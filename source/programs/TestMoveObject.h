@@ -39,11 +39,11 @@ public:
 	int Step(ProgramInputHandler* input_handler) override
 	{
 		// compare with zero
-		if (abs(ProgramInputHandler::keyboardMoveDir.x) > VECTOR_FLOAT_ACCURACY ||
-			abs(ProgramInputHandler::keyboardMoveDir.y) > VECTOR_FLOAT_ACCURACY)
+		if (abs(ProgramInputHandler::keyboardMoveDir->x) > VECTOR_FLOAT_ACCURACY ||
+			abs(ProgramInputHandler::keyboardMoveDir->y) > VECTOR_FLOAT_ACCURACY)
 		{
 			// calculate projection on direction vector
-			position += ProgramInputHandler::keyboardMoveDir * moveSpeed;
+			position += *ProgramInputHandler::keyboardMoveDir * moveSpeed;
 			testBody->SetPosition(position);
 		}
 

@@ -22,19 +22,23 @@ struct Vector3 {
 
 	// work only with this vector
 
-	float length();
+	float length() const;
 	
 	// makes module of vector equal one
 	void normalize();
-	Vector3 normal();
+	Vector3 normal() const;
+
+	// scales each coordinate respectively
+	Vector3 scale(const Vector3& other) const;
 
 
 	Vector3 operator+(const Vector3& other) const;
+	Vector3 operator-(const Vector3& other) const;
 	Vector3 operator*(float a) const;
 	Vector3 operator/(float a) const;
-	Vector3 operator=(const Vector3& other);
 	Vector3 operator+=(const Vector3& other);
 	Vector3 operator-=(const Vector3& other);
+	Vector3& operator=(const Vector3& other) = default;
 };
 
 

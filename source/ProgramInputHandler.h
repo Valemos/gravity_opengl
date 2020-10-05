@@ -13,17 +13,20 @@ class ProgramInputHandler
 public:
 	const int fps = 60;
 
-	static Vector3 keyboardMoveDir;
+	static Vector3* clickedPosition;
+	static Vector3* mousePosition;
+	static Vector3* keyboardMoveDir;
 	static Renderer renderer;
 
 	static ProgramInputHandler* getInstance(int width, int height);
-	~ProgramInputHandler() = default;
+	~ProgramInputHandler();
 
 	int RunProgram(ProgramFramework*);
-	GLFWwindow* GetWindow() const;
+	static GLFWwindow* GetWindow();
 	static void callbackKeyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void callbackWindowResize(GLFWwindow* window, int width, int height);
-
+	static void callbackMouseButton(GLFWwindow* window, int button, int action, int mods);
+	static void callbackMouseMoved(GLFWwindow* window, double xpos, double ypos);
 	
 private:
 	static ProgramInputHandler* instance;

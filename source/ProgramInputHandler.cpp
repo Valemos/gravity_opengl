@@ -8,8 +8,11 @@
 ProgramInputHandler* ProgramInputHandler::instance = nullptr;
 
 Vector3 ProgramInputHandler::window_size = { 0.0, 0.0 };
-Vector3 ProgramInputHandler::keyboardMoveDir = { 0.0, 0.0 };
 Renderer ProgramInputHandler::renderer = Renderer();
+
+Vector3* ProgramInputHandler::keyboardMoveDir = new Vector3{ 0.0, 0.0 };
+Vector3* ProgramInputHandler::mousePosition = new Vector3{0.0, 0.0};
+Vector3* ProgramInputHandler::clickedPosition = new Vector3{0.0, 0.0};
 
 
 ProgramInputHandler* ProgramInputHandler::getInstance(int width = 500, int height = 500)
@@ -19,6 +22,13 @@ ProgramInputHandler* ProgramInputHandler::getInstance(int width = 500, int heigh
 		instance = new ProgramInputHandler(width, height);
 	}
 	return instance;
+}
+
+ProgramInputHandler::~ProgramInputHandler()
+{
+	delete mousePosition;
+	delete clickedPosition;
+	delete keyboardMoveDir;
 }
 
 ProgramInputHandler::ProgramInputHandler(int width, int height)
@@ -41,6 +51,8 @@ int ProgramInputHandler::RunProgram(ProgramFramework* program)
 	GLFWwindow* window = renderer.GetWindow();
 	glfwSetKeyCallback(window, callbackKeyboard);
 	glfwSetWindowSizeCallback(window, callbackWindowResize);
+	glfwSetCursorPosCallback(window, callbackMouseMoved);
+	glfwSetMouseButtonCallback(window, callbackMouseButton);
 
     renderer.LoadShadersFromFile();
 
@@ -70,7 +82,7 @@ int ProgramInputHandler::RunProgram(ProgramFramework* program)
 	return program->Finish(this);
 }
 
-GLFWwindow* ProgramInputHandler::GetWindow() const
+GLFWwindow* ProgramInputHandler::GetWindow()
 {
 	return renderer.GetWindow();
 }
@@ -82,26 +94,26 @@ void ProgramInputHandler::callbackKeyboard(GLFWwindow* window, int key, int scan
 	int key_W = glfwGetKey(window, GLFW_KEY_W);
 	int key_S = glfwGetKey(window, GLFW_KEY_S);
 
-	keyboardMoveDir = { 0, 0 };
+	*keyboardMoveDir = { 0, 0 };
 
 	if (key_A == GLFW_PRESS) {
-		keyboardMoveDir.x -= 1;
+		keyboardMoveDir->x -= 1;
 	}
 
 	if (key_D == GLFW_PRESS) {
-		keyboardMoveDir.x += 1;
+		keyboardMoveDir->x += 1;
 	}
 
 	// handle up and down
 	if (key_W == GLFW_PRESS) {
-		keyboardMoveDir.y += 1;
+		keyboardMoveDir->y += 1;
 	}
 
 	if (key_S == GLFW_PRESS) {
-		keyboardMoveDir.y -= 1;
+		keyboardMoveDir->y -= 1;
 	}
 
-	keyboardMoveDir.normalize();
+	keyboardMoveDir->normalize();
 }
 
 void ProgramInputHandler::callbackWindowResize(GLFWwindow* window, int width, int height)
@@ -112,4 +124,21 @@ void ProgramInputHandler::callbackWindowResize(GLFWwindow* window, int width, in
 	
 	glViewport(0, 0, width, height);
 	window_size = { static_cast<float>(width), static_cast<float>(height) };
+}
+
+void ProgramInputHandler::callbackMouseButton(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		auto scale = renderer.GetScale();
+		*clickedPosition = { static_cast<float>(xpos) / scale.x, static_cast<float>(ypos) / scale.y };
+	}
+}
+
+void ProgramInputHandler::callbackMouseMoved(GLFWwindow* window, double xpos, double ypos)
+{
+	auto scale = renderer.GetScale();
+	*mousePosition = { static_cast<float>(xpos) / scale.x, static_cast<float>(ypos) / scale.y };
 }
